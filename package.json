@@ -10,16 +10,19 @@
   "author": "B1909935",
   "license": "MIT",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
+    "bcrypt": "^5.1.0",
     "cookie-session": "^2.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^6.15.0",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.3"
+    "mongodb": "^5.2.0",
+    "mongoose": "^7.0.3",
+    "validator": "^13.9.0"
   },
   "devDependencies": {
+    "chalk": "^5.2.0",
     "nodemon": "^2.0.22"
   }
 }

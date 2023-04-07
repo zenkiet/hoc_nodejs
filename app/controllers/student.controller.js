@@ -1,5 +1,9 @@
+import { studentRepository } from '../repositories/index.js'
+import HttpStatusCode from '../errors/HttpStatusCode.js'
+
+
 const getAllStudents = async (req, res) => {
-    res.status(200).json({
+    res.status(HttpStatusCode.OK).json({
         message: 'GET all students',
         students: [
             {
@@ -9,7 +13,7 @@ const getAllStudents = async (req, res) => {
             }
         ]
     })
-    res.status(500).json({
+    res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
         message: 'Can not get all students',
         error: 'Internal server error'
     })

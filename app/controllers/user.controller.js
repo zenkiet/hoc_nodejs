@@ -1,32 +1,43 @@
 import { validationResult } from 'express-validator'
-import userRepository from '../repositories/index.js'
+import { userRepository } from '../repositories/index.js'
+import { EventEmitter } from 'node:events'
+import HttpStatusCode from '../errors/HttpStatusCode.js'
+
+const myEvent = new EventEmitter()
+
+//listen
+myEvent.on('event.register.user', (params) => {
+    console.log(`event.register.user', ${JSON.stringify(params)}`)
+})
 
 const login = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() })
+        return res.status(HttpStatusCode.BAD_REQUEST).json({ errors: errors.array() })
     }
     const { email, password } = req.body
     // call repository
     await userRepository.login(email, password)
-    res.status(200).send('login success')
+    res.status(HttpStatusCode.OK).send('login success')
 }
 
 const register = async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() })
-    }
-    const { email, password } = req.body
-    res.status(200).send('login success')
+    const { name, email, password, phone, address } = req.body
+    console.log(name, email, password, phone, address)
+    // call repository
+    await userRepository.register({
+        name, email, password, phone, address
+    })
+    myEvent.emit('event.register.user', req.body)
+    res.status(HttpStatusCode.CREATED).send('register success')
 }
 
 const getDetailUser = async (req, res) => {
     const { id } = req.params
-    res.status(200).json({
+    res.status(HttpStatusCode.OK).json({
         message: `GET detail user with id: ${id}`,
     })
-    
+
 
 }
 
