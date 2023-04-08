@@ -5,7 +5,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "debug": "nodemon --inspect server.js"
   },
   "author": "B1909935",
   "license": "MIT",
@@ -19,7 +20,6 @@
     "express-validator": "^6.15.0",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.2.0",
-    "mongoose": "^7.0.3",
     "validator": "^13.9.0"
   },
   "devDependencies": {

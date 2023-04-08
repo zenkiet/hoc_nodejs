@@ -1,51 +1,41 @@
-import mongoose, { Schema, ObjectId } from 'mongoose';
-import validator from 'validator';
+// import mongoose from 'mongoose';
+// import validator from 'validator';
 
-const StudentSchema = new Schema({
-    id: {
-        type: ObjectId,
-    },
-    name: {
-        type: String,
-        required: true,
-        validate: {
-            validator: (name) => name.length > 3,
-            message: 'Name must be longer than 3 characters.'
-        }
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        validate: {
-            validator: (email) => validator.isEmail(email),
-            message: 'Email is not valid.'
-        }
-    },
-    languages: {
-        type: [String],
-    },
-    gender: {
-        type: String,
-        enum: {
-            values: ['Male', 'Femail'],
-            message: '{VALUE} is not supported.'
-        },
-    },
-    phone: {
-        type: String,
-        validate: {
-            validator: (phone) => validator.isMobilePhone(phone),
-            message: 'Phone is not valid.'
-        }
-    },
-    address: {
-        type: String,
-        validate: {
-            validator: (address) => address.length > 6,
-            message: 'Address must be longer than 6 characters.'
-        }
-    },
-})
+// const { Schema, ObjectId } = mongoose 
 
-export default mongoose.model('Student', StudentSchema);
+// const StudentSchema = new Schema({
+//     id: {
+//         type: ObjectId,
+//     },
+//     name: {
+//         type: String,
+//         required: [true, 'Name is required.'],
+//         minlength: [3, 'Name must be at least 3 characters long.']
+//     },
+//     email: {
+//         type: String,
+//         required: [true, 'Email is required.'],
+//         unique: [true, 'Email must be unique.'],
+//         validate: [validator.isEmail, 'Email is not valid.']
+//     },
+//     languages: {
+//         type: [String],
+//     },
+//     gender: {
+//         type: String,
+//         enum: ['Male', 'Female']
+//     },
+//     phone: {
+//         type: String,
+//         validate: {
+//             validator: (phone) => validator.isMobilePhone(phone),
+//             message: 'Phone is not valid.'
+//         }
+//     },
+//     address: {
+//         type: String,
+//         minlength: [6, 'Address must be at least 6 characters long.']
+//     },
+// })
+
+// export default mongoose.model('Student', StudentSchema);

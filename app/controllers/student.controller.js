@@ -16,10 +16,10 @@ const getAllStudents = async (req, res) => {
             ]
         })
     } catch (error) {
-        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(json({
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
             message: 'Can not get all students',
             error: error.toString()
-        }))
+        })
     }
 }
 

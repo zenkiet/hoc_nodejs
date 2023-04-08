@@ -1,72 +1,58 @@
-import mongoose, { Schema, ObjectId } from 'mongoose';
-import isEmail  from 'validator/lib/isEmail.js';
-import * as dotenv from 'dotenv';
-dotenv.config();
+// import mongoose from 'mongoose';
+// import validator from 'validator';
+// import bcrypt from 'bcrypt';
+// import * as dotenv from 'dotenv';
+// dotenv.config()
 
-const SECRET_PHARSE = parseInt(process.env.SECRET_PHARSE);
+// const SECRET_PHARSE = process.env.SECRET_PHARSE
+// const { Schema, ObjectId } = mongoose;
 
-const UserSchema = new Schema({
-    id: {
-        type: ObjectId,
-    },
-    name: {
-        type: String,
-        required: true,
-        validate: {
-            validator: (value) => value.length > 3,
-            message: 'Name must be longer than 3 characters.'
-        }
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        validate: {
-            validator: (value) => isEmail(value),
-            message: 'Email is not valid.'
-        }
-    },
-    password: {
-        type: String,
-        required: true,
-        validate: {
-            validator: (value) => value.length > 6,
-            message: 'Password must be longer than 6 characters.'
-        }
-    },
-    phone: {
-        type: String
-        // validate: {
-        //     validator: (value) => validator.isMobilePhone(phone,
-        //     message: 'Phone is not valid.'
-        // }
-    },
-    address: {
-        type: String,
-        required: true,
-        validate: {
-            validator: (value) => value.length > 6,
-            message: 'Address must be longer than 6 characters.'
-        }
-    },
-})
-
-// UserSchema.pre('save', function(next) {
-//     const user = this;
-//     bcrypt.genSalt(SECRET_PHARSE, (err, salt) => {
-//         bcrypt.hash(user.password, salt, (err, hash) => {
-//             user.password = hash;
-//             next();
-//         });
-//     });
+// const UserSchema = new Schema({
+//     id: {
+//         type: ObjectId,
+//     },
+//     name: {
+//         type: String,
+//         required: true,
+//         minlength: [4, 'Name must be longer than 3 characters.']
+//     },
+//     email: {
+//         type: String,
+//         required: true,
+//         unique: true,
+//         validate: {
+//             validator: (value) => validator.isEmail(value),
+//             message: 'Email is not valid.'
+//         }
+//     },
+//     password: {
+//         type: String,
+//         required: true,
+//         minlength: [6, 'Password must be longer than 6 characters.']
+//     },
+//     phone: {
+//         type: String,
+//     },
+//     address: {
+//         type: String,
+//         required: true,
+//         minlength: [6, 'Address must be longer than 6 characters.']
+//     },
 // })
 
-// UserSchema.methods.comparePassword = (candidatePassword, callback) => {
-//     bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-//         if (err) return callback(err);
-//         callback(null, isMatch);
-//     });
+// UserSchema.pre('save', async function (next) {
+//     const user = this;
+//     if (user.isModified('password')) {
+//         user.password = await bcrypt.hash(user.password, parseInt(SECRET_PHARSE));
+//     }
+//     next();
+// });
+
+// UserSchema.methods.toJSON = function () {
+//     const user = this;
+//     const userObject = user.toObject();
+//     delete userObject.password;
+//     return userObject;
 // }
 
-
-export default mongoose.model('User', UserSchema);
+// export default mongoose.model('User', UserSchema);

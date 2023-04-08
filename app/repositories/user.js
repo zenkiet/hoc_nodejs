@@ -1,49 +1,44 @@
 import { print, type } from '../helpers/print.js'
-import { User } from '../models/index.js'
+import UserService from '../services/User.js'
 import { Exception } from '../errors/index.js'
+import MongoDB from '../utils/mongodb.util.js'
 import bcrypt from 'bcrypt'
 
-
 const login = async ({ email, password }) => {
-    print('login user in user repository', type.INFO);
+    try {
+        let existUser = await User.findOne({email}).exec()
+        if(existUser){
+            let isMatch = await bcrypt.compare(password, existUser.password)
+            if(!!isMatch){
+                // create JWT token
+            } else {
+                throw new Exception(Exception.WRONG_USER_PASSWORD)
+            }
+        }
+
+    
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 const register = async ({ email, password, name, phone, address }) => {
-    print(`
-        Register user with: 
-        email: ${email} 
-        password: ${password} 
-        name: ${name} 
-        phone: ${phone}
-        address: ${address}
-    `, type.INFO);
-
-    // validate exist user
     try{
-        // let existUser = await User.findOne({ email  })
-        // if(!!existUser){ //check not null
-        //     throw new Exception(Exception.USER_EXIST)
-        // }
-
         // hash password
-        const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT))
-
-        // create user
-        const newUser = new User({
-            name, 
+        let hashedPassword = await bcrypt.hash(password, parseInt(process.env.SECRET_PHARSE))
+        
+        // use service create
+        const userService = new UserService(MongoDB.client);
+        const document = await userService.create({
             email,
             password: hashedPassword,
+            name,
             phone,
             address
-        })
+        });
 
-        return {
-            name: newUser.name,
-            email: newUser.email,
-            phone: newUser.phone,
-            address: newUser.address,
-            password: "not show password"
-        }; //! important save()
+        return document
+        
     } catch (error){
         print(error.toString(), type.ERROR)
         throw new Exception(Exception.CANNOT_REGISTER_USER)
