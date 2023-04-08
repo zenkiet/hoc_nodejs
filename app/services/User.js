@@ -8,6 +8,7 @@ class UserService {
 
     async validate(user){
         const errors = {};
+
         if (!validator.isEmail(user.email)) {
             errors.email = 'Email is not valid';
         } else if(!validator.isMobilePhone(user.phone, 'vi-VN')) {
@@ -24,13 +25,15 @@ class UserService {
         if(existUser){
             errors.email = 'Email is already exist';
         }
+
         if (Object.keys(errors).length > 0) {
             throw new Error(JSON.stringify(errors));
         }
     }
+
     extactUserData(payload) {
         const user = {
-            _id: payload._id ? new ObjectId(payload._id) : undefined,
+            _id: payload._id && ObjectId.createFromHexString(payload._id),
             name: payload.name,
             email: payload.email,
             password: payload.password,
@@ -38,10 +41,8 @@ class UserService {
             address: payload.address,
         };
         
-        // check validate data
         this.validate(user);
 
-        //remove undefined fields
         Object.keys(user).forEach(
             (key) => (user[key] === undefined) && delete user[key]
         );
@@ -53,10 +54,49 @@ class UserService {
         
         const result = await this.User.findOneAndUpdate(
             { email: user.email },
-            { $setOnInsert: user },
+            { $set: user },
             { upsert: true, returnOriginal: false }
         );
+        return {
+            ...user,
+            password: "Not show password"
+        }
+    }
+
+    async find(filter){
+        const cursor = this.User.find(filter);
+        return cursor.toArray();
+    }
+
+    async findById(id){
+        return await this.User.findOne({
+            _id: ObjectId.createFromHexString(id)
+        })
+    }
+
+    async update(id, payload){
+        const filter = {
+            _id: ObjectId.createFromHexString(id)
+        }
+        const update = this.extactUserData(payload);
+        const result = await this.User.findOneAndUpdate(
+            filter,
+            { $set: update },
+            { returnDocument: 'after' }
+        );
         return result.value;
+    }
+
+    async delete(id){
+        const result = await this.User.findOneAndDelete({
+            _id: ObjectId.createFromHexString(id)
+        })
+        return result.value;
+    }
+
+    async deleteAll(){
+        const result = await this.User.deleteMany({});
+        return result.deletedCount;
     }
 }
 

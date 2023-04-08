@@ -15,8 +15,6 @@ const login = async ({ email, password }) => {
                 throw new Exception(Exception.WRONG_USER_PASSWORD)
             }
         }
-
-    
     } catch (error) {
         console.log(error)
     }
@@ -29,16 +27,14 @@ const register = async ({ email, password, name, phone, address }) => {
         
         // use service create
         const userService = new UserService(MongoDB.client);
-        const document = await userService.create({
+        const result = await userService.create({
             email,
             password: hashedPassword,
             name,
             phone,
             address
         });
-
-        return document
-        
+        return result
     } catch (error){
         print(error.toString(), type.ERROR)
         throw new Exception(Exception.CANNOT_REGISTER_USER)
