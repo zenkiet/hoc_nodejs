@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 import { usersRouter, studentsRouter } from './app/routes/index.js'
 import MongoDB from './app/utils/mongodb.util.js'
-import Exception from './app/errors/Exception.js'
+import { Exception }  from './app/errors/index.js'
 
 const app = express()
 

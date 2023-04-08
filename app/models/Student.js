@@ -45,7 +45,7 @@ const StudentSchema = new Schema({
             validator: (address) => address.length > 6,
             message: 'Address must be longer than 6 characters.'
         }
-    }
+    },
 })
 
 export default mongoose.model('Student', StudentSchema);

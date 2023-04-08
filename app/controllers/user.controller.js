@@ -2,6 +2,7 @@ import { validationResult } from 'express-validator'
 import { userRepository } from '../repositories/index.js'
 import { EventEmitter } from 'node:events'
 import HttpStatusCode from '../errors/HttpStatusCode.js'
+import { json } from 'express'
 
 const myEvent = new EventEmitter()
 
@@ -25,11 +26,20 @@ const register = async (req, res) => {
     const { name, email, password, phone, address } = req.body
     console.log(name, email, password, phone, address)
     // call repository
-    await userRepository.register({
-        name, email, password, phone, address
-    })
+    
     myEvent.emit('event.register.user', req.body)
-    res.status(HttpStatusCode.CREATED).send('register success')
+    try {
+        const user = await userRepository.register({
+            name, email, password, phone, address
+        })
+        res.status(HttpStatusCode.OK).send(json({
+            message: 'Register user successfully',
+        }))
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(json({
+            message: error.toString()
+        }))
+    }
 }
 
 const getDetailUser = async (req, res) => {
@@ -37,8 +47,6 @@ const getDetailUser = async (req, res) => {
     res.status(HttpStatusCode.OK).json({
         message: `GET detail user with id: ${id}`,
     })
-
-
 }
 
 export default {
