@@ -9,8 +9,10 @@ export default class Exception extends Error {
     static PASSWORD_NOT_MATCH = 'Password is not match'
     static CANNOT_REGISTER_USER = 'Cannot register user'
     static WRONG_USER_PASSWORD = 'Wrong username or password'
-    constructor(message) {
+    
+    constructor(message, validateErrors = {}) {
         super(message)
-        print(message, type.error)
+        print(message, type.ERROR)
+        this.validateErrors = validateErrors
     }
 }

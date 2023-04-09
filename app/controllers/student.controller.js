@@ -1,6 +1,5 @@
 import { studentRepository } from '../repositories/index.js'
 import HttpStatusCode from '../errors/HttpStatusCode.js'
-import { json } from 'express'
 
 
 const getAllStudents = async (req, res) => {
@@ -33,14 +32,21 @@ const getStudentById = async (req, res) => {
 const insertStudent = async (req, res) => {
     try {
         const student = await studentRepository.insertStudent(req.body)
-        res.status(HttpStatusCode.CREATED).json({
-            message: 'POST insert student',
-            data: student
-        })
-    } catch (error) {
+        if(!!student.messageError){
+            res.status(HttpStatusCode.BAD_REQUEST).json({
+                message: 'Can not insert student',
+                validationErrors: student.validationErrors
+            })
+        } else {
+            res.status(HttpStatusCode.CREATED).json({
+                message: 'POST insert student',
+                data: student
+            })
+        }
+    } catch (exception) {
         res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
             message: 'Can not insert student',
-            error: error.toString()
+            validationErrors: exception.validationErrors
         })
     }
 }
