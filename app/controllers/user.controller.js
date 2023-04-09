@@ -11,21 +11,35 @@ myEvent.on('event.register.user', (params) => {
 })
 
 const login = async (req, res) => {
+    //* Validate request
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(HttpStatusCode.BAD_REQUEST).json({ errors: errors.array() })
     }
+
     const { email, password } = req.body
-    // call repository
-    await userRepository.login({ email, password })
-    res.status(HttpStatusCode.OK).json({
-        message: 'Login success',
-    })
+    try {
+        //* Call repository
+        let existUser = await userRepository.login({ email, password })
+        if(existUser){
+            res.status(HttpStatusCode.OK).json({
+                message: 'Login success',
+                user: existUser
+            })
+        } else {
+            res.status(HttpStatusCode.UNAUTHORIZED).json({
+                message: 'Login failed',
+            })
+        }
+    } catch(error){
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: error.toString()
+        })
+    }
 }
 
 const register = async (req, res) => {
     const { name, email, password, phone, address } = req.body
-    console.log(name, email, password, phone, address)
     // call repository
     
     myEvent.emit('event.register.user', req.body)

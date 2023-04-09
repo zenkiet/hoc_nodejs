@@ -31,9 +31,18 @@ const getStudentById = async (req, res) => {
 }
 
 const insertStudent = async (req, res) => {
-    await res.status(HttpStatusCode.OK).json({
-        message: 'POST insert student',
-    })
+    try {
+        const student = await studentRepository.insertStudent(req.body)
+        res.status(HttpStatusCode.CREATED).json({
+            message: 'POST insert student',
+            data: student
+        })
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: 'Can not insert student',
+            error: error.toString()
+        })
+    }
 }
 
 const updateStudent = async (req, res) => {

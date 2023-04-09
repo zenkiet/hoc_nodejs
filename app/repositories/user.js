@@ -1,16 +1,28 @@
 import { print, type } from '../helpers/print.js'
-import UserService from '../services/User.js'
+import { UserService } from '../services/index.js'
 import { Exception } from '../errors/index.js'
 import MongoDB from '../utils/mongodb.util.js'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 const login = async ({ email, password }) => {
     try {
-        let existUser = await User.findOne({email}).exec()
+        const User = new UserService(MongoDB.client)
+        let existUser = await User.findByEmail(email)
         if(existUser){
             let isMatch = await bcrypt.compare(password, existUser.password)
             if(!!isMatch){
                 // create JWT token
+                let token = jwt.sign({
+                    data: existUser
+                }, process.env.JWT_SECRET, {
+                    expiresIn: '1d' // expires in 10 days
+                })
+                return {
+                    ...existUser,
+                    password: "Not show password",
+                    token
+                }
             } else {
                 throw new Exception(Exception.WRONG_USER_PASSWORD)
             }
@@ -26,8 +38,8 @@ const register = async ({ email, password, name, phone, address }) => {
         let hashedPassword = await bcrypt.hash(password, parseInt(process.env.SECRET_PHARSE))
         
         // use service create
-        const userService = new UserService(MongoDB.client);
-        const result = await userService.create({
+        const User = new UserService(MongoDB.client);
+        const result = await User.create({
             email,
             password: hashedPassword,
             name,

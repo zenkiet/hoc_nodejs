@@ -6,8 +6,10 @@ import { usersRouter, studentsRouter } from './app/routes/index.js'
 import MongoDB from './app/utils/mongodb.util.js'
 import { Exception }  from './app/errors/index.js'
 
-const app = express()
+import checkToken from './app/middlewares/auth.js'
 
+const app = express()
+app.use(checkToken)
 app.use(express.json())
 
 const PORT = process.env.PORT || 3000
