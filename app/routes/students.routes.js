@@ -4,10 +4,12 @@ const router = express.Router()
 
 router.get('/', studentController.getAllStudents)
 
-router.get('/:id', studentController.getStudentById)
+router
+    .get('/:id', studentController.getStudentById)
+    .patch('/:id', studentController.updateStudent)
 
 router.post('/insert', studentController.insertStudent)
 
-router.post('/update', studentController.updateStudent)
+router.post('/insertfake', studentController.generateFakeStudents)
 
 export default router

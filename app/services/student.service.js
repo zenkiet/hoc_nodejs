@@ -11,7 +11,7 @@ class StudentService {
 
         if (!validator.isEmail(student.email)) {
             errors.email = 'Email is not valid'
-        } else if (!validator.isMobilePhone(student.phone, 'vi-VN')) {
+        } else if (!validator.isMobilePhone(student.phone)) {
             errors.phone = 'Phone is not valid'
         } else if (!validator.isLength(student.name, { min: 6 })) {
             errors.name = 'Name length must be at least 6 characters'
@@ -51,10 +51,34 @@ class StudentService {
         return student;
     }
 
+    async getAll({ page, size, searchString }) {
+        const query = searchString ? { name: { $regex: searchString, $options: 'i' } } : {}
+        const students = await this.Student.find(query).skip((page - 1) * size).limit(size).toArray()
+        const total = await this.Student.countDocuments(query)
+        return { students, total }
+    }
+
+    async getDetail(id) {
+        const student = await this.Student.findOne({ _id: ObjectId.createFromHexString(id) })
+        return student
+    }
+
+    async updateStudent(id, updatedData){
+        try {
+            const updatedStudent = await this.Student.updateOne(
+                { _id: ObjectId.createFromHexString(id) },
+                { $set: updatedData }
+            );
+            return updatedStudent.acknowledged;
+        } catch (err) {
+            throw new Error(`Failed to update student: ${err.message}`);
+        }
+    }
+
     async create(payload) {
         const student = await this.extractStudentData(payload)
-        
-        if(!!student.messageError){
+
+        if (!!student.messageError) {
             return student
         }
 
@@ -65,6 +89,26 @@ class StudentService {
         )
 
         return student
+    }
+
+    async insertMany(payload) {
+        let students = []
+        let length = payload.length
+        for (let i = 0; i < length; i++) {
+            const student = await this.extractStudentData(payload[i])
+            students.push(student)
+        }
+
+        const invalidStudents = students.filter(student => !!student.messageError)
+        if (invalidStudents.length > 0) {
+            return {
+                messageError: "Input Error",
+                validationErrors: invalidStudents.map(student => student.validationErrors)
+            }
+        }
+
+        const result = await this.Student.insertMany(students)
+        return result
     }
 }
 

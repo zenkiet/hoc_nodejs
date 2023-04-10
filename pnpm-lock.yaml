@@ -22,6 +22,9 @@ dependencies:
   express-validator:
     specifier: ^6.15.0
     version: 6.15.0
+  faker:
+    specifier: ^5.5.3
+    version: 5.5.3
   jsonwebtoken:
     specifier: ^9.0.0
     version: 9.0.0
@@ -33,6 +36,9 @@ dependencies:
     version: 13.9.0
 
 devDependencies:
+  '@faker-js/faker':
+    specifier: ^7.6.0
+    version: 7.6.0
   chalk:
     specifier: ^5.2.0
     version: 5.2.0
@@ -41,6 +47,11 @@ devDependencies:
     version: 2.0.22
 
 packages:
+
+  /@faker-js/faker@7.6.0:
+    resolution: {integrity: sha512-XK6BTq1NDMo9Xqw/YkYyGjSsg44fbNwYRx7QK2CuoQgyy+f1rrTDHoExVM5PsyXCtfl2vs2vVJ0MN0yN6LppRw==}
+    engines: {node: '>=14.0.0', npm: '>=6.0.0'}
+    dev: true
 
   /@mapbox/node-pre-gyp@1.0.10:
     resolution: {integrity: sha512-4ySo4CjzStuprMwk35H5pPbkymjv1SF3jGLj6rAHp/xT/RF7TL7bd9CTm1xDY49K2qF7jmR/g7k+SkLETP6opA==}
@@ -435,6 +446,10 @@ packages:
       vary: 1.1.2
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /faker@5.5.3:
+    resolution: {integrity: sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==}
     dev: false
 
   /fill-range@7.0.1:

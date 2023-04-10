@@ -3,16 +3,17 @@ import HttpStatusCode from '../errors/HttpStatusCode.js'
 
 
 const getAllStudents = async (req, res) => {
+    // localhost:3000/students?page=1&size=10&searchString=abc
+    let { page= 1, size= 10, searchString= '' } = req.query
+    size = size > 10 ? 10 : size
+    page = page < 1 ? 1 : page
+
     try {
-        await res.status(HttpStatusCode.OK).json({
+        const result = await studentRepository.getAllStudents({page, size, searchString})
+        res.status(HttpStatusCode.OK).json({
             message: 'GET all students',
-            students: [
-                {
-                    id: 1,
-                    name: 'Nguyen Van A',
-                    age: 20
-                }
-            ]
+            total: result.total,
+            data: result.students
         })
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
@@ -24,9 +25,25 @@ const getAllStudents = async (req, res) => {
 
 const getStudentById = async (req, res) => {
     const { id } = req.params
-    res.status(HttpStatusCode.OK).json({
-        message: `GET student with id: ${id}`,
-    })
+    try {
+        const student = await studentRepository.getDetailStudent(id)
+        if(!!student){
+            res.status(HttpStatusCode.OK).json({
+                message: `GET student by id: ${id}`,
+                data: student
+            })
+        } else {
+            res.status(HttpStatusCode.NOT_FOUND).json({
+                message: `Student with id: ${id} not found`,
+                error: 'Student not found'
+            })
+        }
+    } catch(error){
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: 'Can not get student by id',
+            error: error.toString()
+        })
+    }
 }
 
 const insertStudent = async (req, res) => {
@@ -52,14 +69,46 @@ const insertStudent = async (req, res) => {
 }
 
 const updateStudent = async (req, res) => {
-    await res.status(HttpStatusCode.OK).json({
-        message: 'POST update student',
-    })
+    const { id } = req.params
+    try {
+        const student = await studentRepository.updateStudent({id, ...req.body})
+        if(!!student.messageError){
+            res.status(HttpStatusCode.BAD_REQUEST).json({
+                message: 'Can not update student',
+                validationErrors: student.validationErrors
+            })
+        } else {
+            res.status(HttpStatusCode.OK).json({
+                message: 'PUT update student',
+                data: student
+            })
+        }
+    } catch (exception) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: 'Can not update student',
+            validationErrors: exception.validationErrors
+        })
+    }
+}
+
+const generateFakeStudents = async (req, res) => {
+    try {
+        await studentRepository.generateFakeStudents()
+        res.status(HttpStatusCode.OK).json({
+            message: 'Generate fake students',
+        })
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+            message: 'Can not generate fake students',
+            error: error.toString()
+        })
+    }
 }
 
 export default {
     getAllStudents,
     getStudentById,
     insertStudent,
-    updateStudent
+    updateStudent,
+    generateFakeStudents
 }

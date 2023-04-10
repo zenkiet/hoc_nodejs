@@ -1,7 +1,6 @@
-import { print, type } from '../helpers/print.js'
+import { MongoDB, print, type } from '../utils/index.js'
 import { UserService } from '../services/index.js'
 import { Exception } from '../errors/index.js'
-import MongoDB from '../utils/mongodb.util.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 

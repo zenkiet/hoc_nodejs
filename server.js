@@ -2,9 +2,8 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 import express from 'express'
-import {print, type} from './app/helpers/print.js'
+import {MongoDB, print, type} from './app/utils/index.js'
 import { usersRouter, studentsRouter } from './app/routes/index.js'
-import MongoDB from './app/utils/mongodb.util.js'
 import { Exception }  from './app/errors/index.js'
 
 import checkToken from './app/middlewares/auth.js'
